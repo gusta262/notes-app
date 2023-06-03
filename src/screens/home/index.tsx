@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import { Modal } from "react-native";
 import { useNavigation } from "@react-navigation/native";
@@ -7,10 +7,20 @@ import { ButtonWithIcon, SimpleButton } from "../../components/touchables";
 import { SimpleContainer } from "../../components/containers/styles";
 import { ModalContainer, ModalView } from "./styles";
 import { propsStack } from "../../routes/models";
+import { getRealm } from "../../database/RealmConfig";
 
 export const HomeScreen = () => {
   const navigation = useNavigation<propsStack>();
   const [modalVisible, setModalVisible] = useState(false);
+
+  useEffect(() => {
+    const get = async () => {
+      const realm = await getRealm();
+      console.log(realm)
+    }
+
+    get()
+  }, [])
 
   return (
     <SimpleContainer>
