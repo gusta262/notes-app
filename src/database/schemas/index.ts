@@ -1,9 +1,9 @@
 export const AnotationsSchema = {
   name: 'Anotations',
   properties: {
-    _id: "objectId",
+    _id: "string",
     title: "string",
-    description: "string",
+    anotation: "string",
     created_at: "string", 
   },
   primaryKey: '_id',
