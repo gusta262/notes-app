@@ -1,13 +1,7 @@
-import { Realm, createRealmContext } from '@realm/react'
+import { Realm } from '@realm/react'
 import { AnotationsSchema } from './schemas';
 
-export const RealmContext = createRealmContext({
-  schema: [AnotationsSchema],
-  inMemory: true,
-});
-
 export const getRealm = async () => await Realm.open({
-  path: 'Anotations.realm',
+  path: 'my-notes.app',
   schema: [AnotationsSchema],
-  inMemory: true,
 })

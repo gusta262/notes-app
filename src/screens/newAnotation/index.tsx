@@ -11,26 +11,29 @@ import { getRealm } from "../../database/RealmConfig";
 type payload = {
   title: string;
   anotation: string;
+  type: string;
 }
 
 export const NewAnotationScreen = ({ navigation, type }) => {
   
   const createAnotation = async (values: payload) => {
+    const realm = await getRealm();
     try {
-      const realm = await getRealm();
       const data = realm.write(() => {
-        realm.create("Anotations", {
+        realm.create("Anotation", {
           _id: uuid.v4(),
           title: values.title,
           anotation: values.anotation,
-          created_at: new Date().toISOString(),
+          type: values.type,
+          created_at: new Date(),
         });
       })
 
-      realm.close();
-      console.log("aaa", data)
+      navigation.goBack()
     } catch (error) {
       console.log("bbb", error)
+    } finally {
+      realm.close();
     }
   };
 
@@ -43,6 +46,7 @@ export const NewAnotationScreen = ({ navigation, type }) => {
     initialValues: {
       title: "",
       anotation: "lerolero",
+      type: "text",
     },
 
     onSubmit: (values) => createAnotation(values),
@@ -64,7 +68,6 @@ export const NewAnotationScreen = ({ navigation, type }) => {
       <SubmitButton  onPress={() => {
         if (form.isValid) {
           form.handleSubmit();
-          navigation.goBack();
         } else {
           Alert.alert("Erro", "Preencha todos os campos");
         }

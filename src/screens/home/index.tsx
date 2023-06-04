@@ -1,7 +1,7 @@
-import React, { useEffect } from "react";
+import React, { useCallback } from "react";
 import { useState } from "react";
-import { Modal } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { Modal, Text, View } from "react-native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { PlusButton } from "../../components/plusButton/PlusButton";
 import { ButtonWithIcon, SimpleButton } from "../../components/touchables";
 import { SimpleContainer } from "../../components/containers/styles";
@@ -9,21 +9,48 @@ import { ModalContainer, ModalView } from "./styles";
 import { propsStack } from "../../routes/models";
 import { getRealm } from "../../database/RealmConfig";
 
+type notesProps = {
+  _id: string;
+  title: string;
+  anotation: string;
+  type: string;
+  created_at: Date;
+};
+
 export const HomeScreen = () => {
   const navigation = useNavigation<propsStack>();
   const [modalVisible, setModalVisible] = useState(false);
+  const [notes, setNotes] = useState<notesProps[]>([]);
 
-  useEffect(() => {
-    const get = async () => {
-      const realm = await getRealm();
-      console.log(realm)
+  const getNotes = async () => {
+    const realm = await getRealm();
+    try {
+      const response = realm.objects<notesProps[]>("Anotation").toJSON();
+      setNotes(response);
+      console.log("response", response);
+    } catch (error) {
+      console.log("error", error);
+    } finally {
+      realm.close();
     }
+  };
 
-    get()
-  }, [])
+  useFocusEffect(
+    useCallback(() => {
+      getNotes();
+    }, [])
+  );
 
   return (
     <SimpleContainer>
+      <View>
+        {notes.map((note) => (
+          <View key={note._id}>
+            <Text>{note.title}</Text>
+            <Text>{note.anotation}</Text>
+          </View>
+        ))}
+      </View>
       <PlusButton onPress={() => setModalVisible(true)} />
 
       <Modal
